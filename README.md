@@ -12,3 +12,11 @@
 - Restart
 - Lose
 - Win
+
+## Authors
+
+- Juarez Ariño, Mauro
+
+## License
+
+- GNU GPL v3.0
