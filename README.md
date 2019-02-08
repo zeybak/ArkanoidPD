@@ -1,6 +1,6 @@
 # ArkanoidPD
 
-## TODOS
+## TO-DO
 
 - Use classes
 - Paddle collision
