@@ -40,10 +40,14 @@ block :: Location -> Picture
 block location = translate (xLoc location) (yLoc location) $ 
     color (paddleColor defaultGraphicSettings) $ 
     rectangleSolid (xScale (paddleSize defaultGraphicSettings)) (yScale (paddleSize defaultGraphicSettings))
-wall :: Location -> Picture
-wall location = translate (xLoc location) (yLoc location) $ 
+horizontalWall :: Location -> Picture
+horizontalWall location = translate (xLoc location) (yLoc location) $ 
     color (wallColor defaultGraphicSettings) $ 
     rectangleSolid (xScale (wallSize defaultGraphicSettings)) (yScale (wallSize defaultGraphicSettings))
+verticalWall :: Location -> Picture
+verticalWall location = translate (xLoc location) (yLoc location) $ 
+    color (wallColor defaultGraphicSettings) $ 
+    rectangleSolid (yScale (wallSize defaultGraphicSettings)) (xScale (wallSize defaultGraphicSettings))
 
 {- How the render is going to be displayed as a Picture every simulation -}
 render :: ArkanoidGame -> Picture
@@ -56,4 +60,9 @@ render game = pictures
     where
         ballRender = ball (ballLoc game)
         playerRender = block (playerLoc game)
-        wallsRender = pictures [wall Location { xLoc = 0, yLoc = -150 }, wall Location { xLoc = 0, yLoc = 150 }]
+        wallsRender = pictures  [
+                                    horizontalWall Location { xLoc = 0, yLoc = -150 }, 
+                                    horizontalWall Location { xLoc = 0, yLoc = 150 },
+                                    verticalWall Location { xLoc = -150, yLoc = 0 },
+                                    verticalWall Location { xLoc = 150, yLoc = 0 }
+                                ]
