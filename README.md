@@ -1,6 +1,6 @@
 # ArkanoidPD
 
-This project was made as an declarative programming's test, for my Software Engineering's career.  
+This project was made as a declarative programming's test, for my Software Engineering's career.  
 University: Blas Pascal University  
 Career: Software Engineering  
 Course: Declarative Programming  
