@@ -1,55 +1,27 @@
 module Render where
 
+import Settings
 import World
 import Game
 import Graphics.Gloss hiding (Scale)
 
-{- Window settings -}
+{- Window display -}
 window :: Display
 window = InWindow "ArkanoidPD" (300, 300) (15, 15)
 
-{- Graphic settings -}
-data ArkanoidGraphicSettings = ArkanoidGraphicSettings
-    {
-        backgroundColor :: Color,
-        ballColor :: Color,
-        ballRadius :: Float,
-        paddleColor :: Color,
-        paddleSize :: Scale,
-        wallColor :: Color,
-        wallSize :: Scale
-    }
-defaultGraphicSettings :: ArkanoidGraphicSettings
-defaultGraphicSettings = ArkanoidGraphicSettings
-    {
-        backgroundColor = black,
-        ballColor = white,
-        ballRadius = 5,
-        paddleColor = white,
-        paddleSize = Scale { xScale = 50, yScale = 10 },
-        wallColor = dark (dark white),
-        wallSize = Scale { xScale = 300, yScale = 10 }
-    }
+{- Draw graphic objects as a picture to be rendered -}
+drawBall :: WorldObject -> Picture
+drawBall object = 
+    translate (getLocationX object) (getLocationY object) $ -- move object in world
+    color (getColor object) $ -- set object color
+    circleSolid (getScaleX object) -- draw a solid circle with defined radius
+drawBlock :: WorldObject -> Picture
+drawBlock object = 
+    translate (getLocationX object) (getLocationY object) $
+    color (getColor object) $
+    rectangleSolid (getScaleX object) (getScaleY object)
 
-{- Graphic Objects -}
-ball :: Location -> Picture
-ball location = translate (xLoc location) (yLoc location) $ 
-    color (ballColor defaultGraphicSettings) $ 
-    circleSolid (ballRadius defaultGraphicSettings)
-block :: Location -> Picture
-block location = translate (xLoc location) (yLoc location) $ 
-    color (paddleColor defaultGraphicSettings) $ 
-    rectangleSolid (xScale (paddleSize defaultGraphicSettings)) (yScale (paddleSize defaultGraphicSettings))
-horizontalWall :: Location -> Picture
-horizontalWall location = translate (xLoc location) (yLoc location) $ 
-    color (wallColor defaultGraphicSettings) $ 
-    rectangleSolid (xScale (wallSize defaultGraphicSettings)) (yScale (wallSize defaultGraphicSettings))
-verticalWall :: Location -> Picture
-verticalWall location = translate (xLoc location) (yLoc location) $ 
-    color (wallColor defaultGraphicSettings) $ 
-    rectangleSolid (yScale (wallSize defaultGraphicSettings)) (xScale (wallSize defaultGraphicSettings))
-
-{- How the render is going to be displayed as a Picture every simulation -}
+{- Render all pictures in the game -}
 render :: ArkanoidGame -> Picture
 render game = pictures
     [
@@ -58,11 +30,6 @@ render game = pictures
         wallsRender
     ]
     where
-        ballRender = ball (ballLoc game)
-        playerRender = block (playerLoc game)
-        wallsRender = pictures  [
-                                    horizontalWall Location { xLoc = 0, yLoc = -150 }, 
-                                    horizontalWall Location { xLoc = 0, yLoc = 150 },
-                                    verticalWall Location { xLoc = -150, yLoc = 0 },
-                                    verticalWall Location { xLoc = 150, yLoc = 0 }
-                                ]
+        ballRender = drawBall (ball game)
+        playerRender = drawBlock (player game)
+        wallsRender = pictures (map drawBlock (walls game)) -- iterate over all walls in the game using drawBlock
