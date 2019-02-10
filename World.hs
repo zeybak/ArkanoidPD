@@ -15,6 +15,8 @@ data WorldObject = WorldObject
         velocity :: Vector, -- Current object's velocity on the world
         objColor :: Color -- Object's color
     }
+data CollisionType = NoCollision | LeftCollision | RightCollision | TopCollision | BottomCollision deriving (Eq)
+data BoundaryType = LeftBoundary | RightBoundary | TopBoundary | BottomBoundary deriving (Eq)
 
 {- Vector handling functions -}
 createVector :: (Float, Float) -> Vector
@@ -33,6 +35,8 @@ getVector :: Vector -> (Float, Float)
 getVector vector = (getVectorX vector, getVectorY vector)
 getVectorInt :: Vector -> (Int, Int)
 getVectorInt vector = (round (getVectorX vector), round (getVectorY vector))
+sumVectors :: Vector -> Vector -> Vector
+sumVectors a b = createVector (getVectorX a + getVectorX b, getVectorY a + getVectorY b)
 
 {- Location handling functions -}
 setLocation :: (Float, Float) -> WorldObject -> Vector
@@ -83,3 +87,14 @@ createBall :: (Float, Float) -> Float -> (Float, Float) -> Color -> WorldObject
 createBall (xLoc, yLoc) scale (xVel, yVel) color = createObject (xLoc, yLoc) (scale, scale) (xVel, yVel) color
 createBlock :: (Float, Float) -> (Float, Float) -> (Float, Float) -> Color -> WorldObject
 createBlock (xLoc, yLoc) (xScale, yScale) (xVel, yVel) color = createObject (xLoc, yLoc) (xScale, yScale) (xVel, yVel) color
+
+{- Object's boundaries -}
+boundaryValue :: WorldObject -> BoundaryType -> Float
+boundaryValue object LeftBoundary = getLocationX object - getScaleX object
+boundaryValue object RightBoundary = getLocationX object + getScaleX object
+boundaryValue object BottomBoundary = getLocationY object - getScaleY object
+boundaryValue object TopBoundary = getLocationY object + getScaleY object
+
+{- Get distance between boundaries -}
+boundariesDistance :: WorldObject -> BoundaryType -> WorldObject -> BoundaryType -> Float
+boundariesDistance firstObject firstBoundary secondObject secondBoundary = abs ((boundaryValue firstObject firstBoundary) - (boundaryValue secondObject secondBoundary))

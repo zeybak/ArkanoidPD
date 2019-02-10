@@ -14,7 +14,6 @@ This project is intended to showcase the power of Haskell and how it can be used
 
 ## TO-DO
 
-- Player collision  
 - Walls collision  
 - Ball speed increase after every collision
 - Restart  
@@ -31,3 +30,15 @@ This project is intended to showcase the power of Haskell and how it can be used
 ## License
 
 - GNU GPL v3.0
+
+## Resources
+
+A list of resources i've used:  
+- https://learnxinyminutes.com/docs/haskell/
+- http://learnyouahaskell.com/chapters
+- https://wiki.haskell.org/Game_Development
+- https://hackage.haskell.org/package/SDL
+- https://hackage.haskell.org/package/sdl2
+- https://hackage.haskell.org/package/gloss
+- http://andrew.gibiansky.com/blog/haskell/haskell-gloss/
+- https://leanpub.com/gameinhaskell

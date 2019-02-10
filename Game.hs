@@ -27,6 +27,12 @@ initialGameState = Game
                 ]
     }
 
+{- Update game after inputs -}
+updateGameWithInput :: Event -> ArkanoidGame -> ArkanoidGame
+updateGameWithInput event game = game { player = player' }
+    where
+        player' = handlePlayerInputs event (player game)
+
 {- Update world object location -}
 updateObjectLocation :: Float -> WorldObject -> Vector -- update ball's location in the world
 updateObjectLocation seconds object = setLocation (x', y') object
@@ -38,22 +44,48 @@ updateObjectLocation seconds object = setLocation (x', y') object
         x' = x + vx * seconds -- this way the ball moves smoothly by using deltaTime
         y' = y + vy * seconds
 
-{- Update world object state -}
-updateObject :: Float -> WorldObject -> WorldObject
-updateObject seconds object = object { location = updateObjectLocation seconds object }
+{- Check first object collision with a second object -}
+checkCollision :: WorldObject -> WorldObject -> CollisionType
+checkCollision firstObject secondObject
+    | boundariesDistance firstObject RightBoundary secondObject LeftBoundary <= (distanceToCollide generalSettings) = RightCollision
+    | boundariesDistance firstObject LeftBoundary secondObject RightBoundary <= (distanceToCollide generalSettings) = LeftCollision
+    | boundariesDistance firstObject BottomBoundary secondObject TopBoundary <= (distanceToCollide generalSettings) = BottomCollision
+    | boundariesDistance firstObject TopBoundary secondObject BottomBoundary <= (distanceToCollide generalSettings) = TopCollision
+    | otherwise = NoCollision
 
-{- Update game after inputs -}
-updateGameWithInput :: Event -> ArkanoidGame -> ArkanoidGame
-updateGameWithInput event game = game { player = player' }
-    where
-        player' = handlePlayerInputs event (player game)
+{- Handle first object velocity based on collision with a second object -}
+handleCollision :: WorldObject -> WorldObject -> Vector
+handleCollision firstObject secondObject
+    | checkCollision firstObject secondObject == RightCollision && getVelocityX firstObject > 0 = 
+        sumVectors (createVector (-(getVelocityX firstObject), getVelocityY firstObject)) (createVector (getVelocity secondObject))
+    | checkCollision firstObject secondObject == LeftCollision && getVelocityX firstObject < 0 = 
+        sumVectors (createVector (-(getVelocityX firstObject), getVelocityY firstObject)) (createVector (getVelocity secondObject))
+    | checkCollision firstObject secondObject == BottomCollision && getVelocityY firstObject < 0 = 
+        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject))) (createVector (getVelocity secondObject))
+    | checkCollision firstObject secondObject == TopCollision && getVelocityY firstObject > 0 = 
+        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject))) (createVector (getVelocity secondObject))
+    | otherwise = createVector (getVelocity firstObject)
+
+{- Update ball velocity based on collisions -}
+updateBallVelocity :: ArkanoidGame -> Vector
+updateBallVelocity game = handleCollision (ball game) (player game)
 
 {- Update all game object's -}
 updateGame :: Float -> ArkanoidGame -> ArkanoidGame
 updateGame seconds game = game { ball = ball', player = player' }
     where
-        ball' = updateObject seconds (ball game)
-        player' = updateObject seconds (player game)
+        ballObj = (ball game)
+        playerObj = (player game)
+
+        ball' = ballObj 
+            { 
+                location = updateObjectLocation seconds ballObj,
+                velocity = updateBallVelocity game
+            }
+        player' = playerObj 
+            { 
+                location = updateObjectLocation seconds playerObj 
+            }
 
 {- Update game state -}
 update :: Float -> ArkanoidGame -> ArkanoidGame

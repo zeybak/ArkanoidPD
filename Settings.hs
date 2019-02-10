@@ -13,7 +13,8 @@ data ArkanoidGeneralSettings = ArkanoidGeneralSettings
         playerScale :: (Float, Float),
         playerSpeed :: Float,
         horizontalWallScale :: (Float, Float),
-        verticalWallScale :: (Float, Float)
+        verticalWallScale :: (Float, Float),
+        distanceToCollide :: Float
     }
 generalSettings :: ArkanoidGeneralSettings
 generalSettings = ArkanoidGeneralSettings
@@ -25,7 +26,8 @@ generalSettings = ArkanoidGeneralSettings
         playerScale = (50, 10),
         playerSpeed = 60,
         horizontalWallScale = (300, 10),
-        verticalWallScale = (10, 300)
+        verticalWallScale = (10, 300),
+        distanceToCollide = 1
     }
 
 {- All game's graphic settings -}
