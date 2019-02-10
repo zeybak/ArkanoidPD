@@ -14,7 +14,7 @@ This project is intended to showcase the power of Haskell and how it can be used
 
 ## TO-DO
 
-- Paddle collision  
+- Player collision  
 - Player movement  
 - Walls collision  
 - Bricks  
