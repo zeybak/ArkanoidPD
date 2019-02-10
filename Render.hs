@@ -7,7 +7,7 @@ import Graphics.Gloss hiding (Scale)
 
 {- Window display -}
 window :: Display
-window = InWindow "ArkanoidPD" (300, 300) (15, 15)
+window = InWindow "UBP PD: Arkanoid" (getVectorInt (windowSize generalSettings)) (15, 15)
 
 {- Draw graphic objects as a picture to be rendered -}
 drawBall :: WorldObject -> Picture

@@ -29,8 +29,10 @@ getVectorX :: Vector -> Float
 getVectorX vector = x vector;
 getVectorY :: Vector -> Float
 getVectorY vector = y vector;
-getVector :: Vector  -> (Float, Float)
+getVector :: Vector -> (Float, Float)
 getVector vector = (getVectorX vector, getVectorY vector)
+getVectorInt :: Vector -> (Int, Int)
+getVectorInt vector = (round (getVectorX vector), round (getVectorY vector))
 
 {- Location handling functions -}
 setLocation :: (Float, Float) -> WorldObject -> Vector

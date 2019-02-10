@@ -15,12 +15,12 @@ This project is intended to showcase the power of Haskell and how it can be used
 ## TO-DO
 
 - Player collision  
-- Player movement  
 - Walls collision  
+- Ball speed increase after every collision
+- Restart  
 - Bricks  
 - Bricks collision  
 - Bricks destruction  
-- Restart  
 - Lose  
 - Win
 
