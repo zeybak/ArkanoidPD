@@ -33,7 +33,7 @@ This project is intended to showcase the power of Haskell and how it can be used
 
 ## Resources
 
-A list of resources i've used:  
+A list of resources I've used:  
 - https://learnxinyminutes.com/docs/haskell/
 - http://learnyouahaskell.com/chapters
 - https://wiki.haskell.org/Game_Development
