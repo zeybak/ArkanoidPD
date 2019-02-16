@@ -57,18 +57,24 @@ checkCollision firstObject secondObject
 handleCollision :: WorldObject -> WorldObject -> Vector
 handleCollision firstObject secondObject
     | checkCollision firstObject secondObject == RightCollision && getVelocityX firstObject > 0 = 
-        sumVectors (createVector (-(getVelocityX firstObject), getVelocityY firstObject)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == LeftCollision && getVelocityX firstObject < 0 = 
-        sumVectors (createVector (-(getVelocityX firstObject), getVelocityY firstObject)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == BottomCollision && getVelocityY firstObject < 0 = 
-        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject))) (createVector (getVelocity secondObject))
+        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == TopCollision && getVelocityY firstObject > 0 = 
-        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject))) (createVector (getVelocity secondObject))
-    | otherwise = createVector (getVelocity firstObject)
+        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
+    | otherwise = createVector (0, 0)
 
 {- Update ball velocity based on collisions -}
 updateBallVelocity :: ArkanoidGame -> Vector
-updateBallVelocity game = handleCollision (ball game) (player game)
+updateBallVelocity game = sumVectors ballSpeed' collisionsExtraSpeed'
+    where
+        ballSpeed' = createVector (getVelocity (ball game))
+        collisionsExtraSpeed' = sumMultipleVectors playerCollision' wallsCollision'
+            where
+                playerCollision' = (handleCollision (ball game) (player game))
+                wallsCollision' = (map (handleCollision (ball game)) (walls game))
 
 {- Update all game object's -}
 updateGame :: Float -> ArkanoidGame -> ArkanoidGame

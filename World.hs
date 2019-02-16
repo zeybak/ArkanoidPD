@@ -37,6 +37,12 @@ getVectorInt :: Vector -> (Int, Int)
 getVectorInt vector = (round (getVectorX vector), round (getVectorY vector))
 sumVectors :: Vector -> Vector -> Vector
 sumVectors a b = createVector (getVectorX a + getVectorX b, getVectorY a + getVectorY b)
+sumMultipleVectors :: Vector -> [Vector] -> Vector
+sumMulipleVectors accVector [] = accVector
+sumMultipleVectors accVector (x:[]) = sumVectors accVector x
+sumMultipleVectors accVector (x:xs) = sumMultipleVectors func' xs
+    where
+        func' = sumVectors accVector x
 
 {- Location handling functions -}
 setLocation :: (Float, Float) -> WorldObject -> Vector
