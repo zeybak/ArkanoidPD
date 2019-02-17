@@ -44,25 +44,33 @@ updateObjectLocation seconds object = setLocation (x', y') object
         x' = x + vx * seconds -- this way the ball moves smoothly by using deltaTime
         y' = y + vy * seconds
 
+{- Check collision type based on velocity -}
+checkCollisionType :: WorldObject -> WorldObject -> CollisionType
+checkCollisionType firstObject secondObject
+    | boundariesDistance firstObject RightBoundary secondObject LeftBoundary <= (distanceToCollide generalSettings) && getVelocityX firstObject > 0 = RightCollision
+    | boundariesDistance firstObject LeftBoundary secondObject RightBoundary <= (distanceToCollide generalSettings) && getVelocityX firstObject < 0 = LeftCollision
+    | boundariesDistance firstObject TopBoundary secondObject BottomBoundary <= (distanceToCollide generalSettings) && getVelocityY firstObject > 0 = TopCollision
+    | boundariesDistance firstObject BottomBoundary secondObject TopBoundary <= (distanceToCollide generalSettings) && getVelocityY firstObject < 0 = BottomCollision
+    | otherwise = NoCollision
+
 {- Check first object collision with a second object -}
 checkCollision :: WorldObject -> WorldObject -> CollisionType
 checkCollision firstObject secondObject
-    | boundariesDistance firstObject RightBoundary secondObject LeftBoundary <= (distanceToCollide generalSettings) = RightCollision
-    | boundariesDistance firstObject LeftBoundary secondObject RightBoundary <= (distanceToCollide generalSettings) = LeftCollision
-    | boundariesDistance firstObject BottomBoundary secondObject TopBoundary <= (distanceToCollide generalSettings) = BottomCollision
-    | boundariesDistance firstObject TopBoundary secondObject BottomBoundary <= (distanceToCollide generalSettings) = TopCollision
-    | otherwise = NoCollision
+    | isObjectInBoundaries (distanceToCollide generalSettings) firstObject secondObject == False = NoCollision
+    | isObjectInBoundaries (distanceToCollide generalSettings) firstObject secondObject == True = collisionType
+        where
+            collisionType = checkCollisionType firstObject secondObject
 
 {- Handle first object velocity based on collision with a second object -}
 handleCollision :: WorldObject -> WorldObject -> Vector
 handleCollision firstObject secondObject
-    | checkCollision firstObject secondObject == RightCollision && getVelocityX firstObject > 0 = 
+    | checkCollision firstObject secondObject == RightCollision = 
         sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
-    | checkCollision firstObject secondObject == LeftCollision && getVelocityX firstObject < 0 = 
+    | checkCollision firstObject secondObject == LeftCollision = 
         sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
-    | checkCollision firstObject secondObject == BottomCollision && getVelocityY firstObject < 0 = 
+    | checkCollision firstObject secondObject == BottomCollision = 
         sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
-    | checkCollision firstObject secondObject == TopCollision && getVelocityY firstObject > 0 = 
+    | checkCollision firstObject secondObject == TopCollision = 
         sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
     | otherwise = createVector (0, 0)
 
@@ -93,6 +101,12 @@ updateGame seconds game = game { ball = ball', player = player' }
                 location = updateObjectLocation seconds playerObj 
             }
 
+{- Check if the game should restart, win or lose -}
+checkGameState :: ArkanoidGame -> ArkanoidGame
+checkGameState game
+    | getLocationY (ball game) < -(getVectorY (windowSize generalSettings)) * 0.5 = initialGameState
+    | otherwise = game
+
 {- Update game state -}
 update :: Float -> ArkanoidGame -> ArkanoidGame
-update seconds = updateGame seconds
+update seconds game = checkGameState (updateGame seconds game)

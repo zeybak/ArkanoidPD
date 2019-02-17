@@ -104,3 +104,10 @@ boundaryValue object TopBoundary = getLocationY object + getScaleY object
 {- Get distance between boundaries -}
 boundariesDistance :: WorldObject -> BoundaryType -> WorldObject -> BoundaryType -> Float
 boundariesDistance firstObject firstBoundary secondObject secondBoundary = abs ((boundaryValue firstObject firstBoundary) - (boundaryValue secondObject secondBoundary))
+
+{- Check if an object is in another object's boundaries -}
+isObjectInBoundaries :: Float -> WorldObject -> WorldObject -> Bool
+isObjectInBoundaries maxDist firstObject secondObject = insideHorizontal && insideVertical
+    where
+        insideHorizontal = abs (getLocationX firstObject - getLocationX secondObject) <= getScaleX firstObject + getScaleX secondObject + maxDist
+        insideVertical = abs (getLocationY firstObject - getLocationY secondObject) <= getScaleY firstObject + getScaleY secondObject + maxDist
