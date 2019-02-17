@@ -27,7 +27,7 @@ generalSettings = ArkanoidGeneralSettings
         playerSpeed = 60,
         horizontalWallScale = (300, 10),
         verticalWallScale = (10, 300),
-        distanceToCollide = 1
+        distanceToCollide = 0.5
     }
 
 {- All game's graphic settings -}

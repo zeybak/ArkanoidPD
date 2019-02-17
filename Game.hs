@@ -65,13 +65,13 @@ checkCollision firstObject secondObject
 handleCollision :: WorldObject -> WorldObject -> Vector
 handleCollision firstObject secondObject
     | checkCollision firstObject secondObject == RightCollision = 
-        sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (-(getVelocityX firstObject) * 2, 0)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == LeftCollision = 
-        sumVectors (createVector (-(getVelocityX firstObject) * 2, getVelocityY firstObject)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (-(getVelocityX firstObject) * 2, 0)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == BottomCollision = 
-        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (0, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
     | checkCollision firstObject secondObject == TopCollision = 
-        sumVectors (createVector (getVelocityX firstObject, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
+        sumVectors (createVector (0, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
     | otherwise = createVector (0, 0)
 
 {- Update ball velocity based on collisions -}
