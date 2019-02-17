@@ -18,6 +18,13 @@ data WorldObject = WorldObject
 data CollisionType = NoCollision | LeftCollision | RightCollision | TopCollision | BottomCollision deriving (Eq)
 data BoundaryType = LeftBoundary | RightBoundary | TopBoundary | BottomBoundary deriving (Eq)
 
+{- Clamp value -}
+clampValue :: Float -> Float -> Float -> Float
+clampValue value min max
+    | value < min = min
+    | value > max = max
+    | otherwise = value
+
 {- Vector handling functions -}
 createVector :: (Float, Float) -> Vector
 createVector (x', y') = Vector { x = x' , y = y' }
@@ -43,6 +50,8 @@ sumMultipleVectors accVector (x:[]) = sumVectors accVector x
 sumMultipleVectors accVector (x:xs) = sumMultipleVectors func' xs
     where
         func' = sumVectors accVector x
+clampVectorElements :: Vector -> Float -> Float -> Vector
+clampVectorElements vector min max = createVector (clampValue (getVectorX vector) min max, clampValue (getVectorY vector) min max)
 
 {- Location handling functions -}
 setLocation :: (Float, Float) -> WorldObject -> Vector

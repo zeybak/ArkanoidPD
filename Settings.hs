@@ -14,7 +14,8 @@ data ArkanoidGeneralSettings = ArkanoidGeneralSettings
         playerSpeed :: Float,
         horizontalWallScale :: (Float, Float),
         verticalWallScale :: (Float, Float),
-        distanceToCollide :: Float
+        distanceToCollide :: Float,
+        collisionExtraSpeed :: Float
     }
 generalSettings :: ArkanoidGeneralSettings
 generalSettings = ArkanoidGeneralSettings
@@ -22,12 +23,13 @@ generalSettings = ArkanoidGeneralSettings
         fps = 60,
         windowSize = createVector(300, 300),
         ballRadius = 5,
-        ballSpeed = -30,
+        ballSpeed = 50,
         playerScale = (50, 10),
         playerSpeed = 60,
-        horizontalWallScale = (300, 10),
-        verticalWallScale = (10, 300),
-        distanceToCollide = 0.5
+        horizontalWallScale = (300, 20),
+        verticalWallScale = (20, 300),
+        distanceToCollide = 0.5,
+        collisionExtraSpeed = 3
     }
 
 {- All game's graphic settings -}

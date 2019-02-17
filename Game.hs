@@ -18,7 +18,7 @@ data ArkanoidGame = Game
 initialGameState :: ArkanoidGame
 initialGameState = Game
     {
-        ball = createBall (0, 0) (ballRadius generalSettings) (0, -30) (ballColor graphicSettings),
+        ball = createBall (0, 0) (ballRadius generalSettings) (0, -(ballSpeed generalSettings)) (ballColor graphicSettings),
         player = createBlock (0, -130) (playerScale generalSettings) (0, 0) (playerColor graphicSettings),
         walls = [
                     createBlock (0, (getVectorX (windowSize generalSettings)) * 0.5) (horizontalWallScale generalSettings) (0, 0) (wallColor graphicSettings),
@@ -94,7 +94,7 @@ updateGame seconds game = game { ball = ball', player = player' }
         ball' = ballObj 
             { 
                 location = updateObjectLocation seconds ballObj,
-                velocity = updateBallVelocity game
+                velocity = clampVectorElements (updateBallVelocity game) (-(ballSpeed generalSettings)) (ballSpeed generalSettings)
             }
         player' = playerObj 
             { 
