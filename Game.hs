@@ -11,7 +11,8 @@ data ArkanoidGame = Game
     {
         ball :: WorldObject,
         player :: WorldObject,
-        walls :: [WorldObject]
+        walls :: [WorldObject],
+        bricks :: [WorldObject]
     }
 
 {- The very first state of the game -}
@@ -24,8 +25,36 @@ initialGameState = Game
                     createBlock (0, (getVectorX (windowSize generalSettings)) * 0.5) (horizontalWallScale generalSettings) (0, 0) (wallColor graphicSettings),
                     createBlock (-(getVectorX (windowSize generalSettings)) * 0.5, 0) (verticalWallScale generalSettings) (0, 0) (wallColor graphicSettings),
                     createBlock ((getVectorX (windowSize generalSettings)) * 0.5, 0) (verticalWallScale generalSettings) (0, 0) (wallColor graphicSettings)
+                ],
+        bricks = [
+                    createBlock (-105, 110) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-105, 90) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-105, 70) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-105, 50) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-35, 110) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-35, 90) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-35, 70) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (-35, 50) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (35, 110) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (35, 90) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (35, 70) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (35, 50) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (105, 110) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (105, 90) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (105, 70) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings),
+                    createBlock (105, 50) (bricksScale generalSettings) (0, 0) (bricksColor graphicSettings)
                 ]
     }
+
+{- How many bricks haven't been destroyed -}
+bricksEnabledAmount :: Int -> [WorldObject] -> Int
+bricksEnabledAmount accValue [] = accValue
+bricksEnabledAmount accValue (x:[])
+    | (enabled x) == True = accValue + 1
+    | otherwise = accValue
+bricksEnabledAmount accValue (x:xs)
+    | (enabled x) == True = bricksEnabledAmount (accValue + 1) xs
+    | otherwise = bricksEnabledAmount accValue xs
 
 {- Update game after inputs -}
 updateGameWithInput :: Event -> ArkanoidGame -> ArkanoidGame
@@ -56,6 +85,7 @@ checkCollisionType firstObject secondObject
 {- Check first object collision with a second object -}
 checkCollision :: WorldObject -> WorldObject -> CollisionType
 checkCollision firstObject secondObject
+    | (enabled secondObject) == False = NoCollision
     | isObjectInBoundaries (distanceToCollide generalSettings) firstObject secondObject == False = NoCollision
     | isObjectInBoundaries (distanceToCollide generalSettings) firstObject secondObject == True = collisionType
         where
@@ -74,19 +104,27 @@ handleCollision firstObject secondObject
         sumVectors (createVector (0, -(getVelocityY firstObject) * 2)) (createVector (getVelocity secondObject))
     | otherwise = createVector (0, 0)
 
+{- Check if ball hitted a brick and therefore disable it -}
+handleBrickCollision :: WorldObject -> WorldObject -> WorldObject
+handleBrickCollision ball brick
+    | (enabled brick) == False = brick
+    | isObjectInBoundaries (distanceToCollide generalSettings) ball brick == True = brick { enabled = False }
+    | otherwise = brick
+
 {- Update ball velocity based on collisions -}
 updateBallVelocity :: ArkanoidGame -> Vector
 updateBallVelocity game = sumVectors ballSpeed' collisionsExtraSpeed'
     where
         ballSpeed' = createVector (getVelocity (ball game))
-        collisionsExtraSpeed' = sumMultipleVectors playerCollision' wallsCollision'
+        collisionsExtraSpeed' = sumMultipleVectors (sumMultipleVectors playerCollision' wallsCollision') bricksCollision'
             where
                 playerCollision' = (handleCollision (ball game) (player game))
                 wallsCollision' = (map (handleCollision (ball game)) (walls game))
+                bricksCollision' = (map (handleCollision (ball game)) (bricks game))
 
 {- Update all game object's -}
 updateGame :: Float -> ArkanoidGame -> ArkanoidGame
-updateGame seconds game = game { ball = ball', player = player' }
+updateGame seconds game = game { ball = ball', player = player', bricks = bricks' }
     where
         ballObj = (ball game)
         playerObj = (player game)
@@ -100,10 +138,12 @@ updateGame seconds game = game { ball = ball', player = player' }
             { 
                 location = updateObjectLocation seconds playerObj 
             }
+        bricks' = map (handleBrickCollision (ball game)) (bricks game)
 
 {- Check if the game should restart, win or lose -}
 checkGameState :: ArkanoidGame -> ArkanoidGame
 checkGameState game
+    | bricksEnabledAmount 0 (bricks game) <= 0 = initialGameState
     | getLocationY (ball game) < -(getVectorY (windowSize generalSettings)) * 0.5 = initialGameState
     | otherwise = game
 

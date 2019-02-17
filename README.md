@@ -15,9 +15,6 @@ This project is intended to showcase the power of Haskell and how it can be used
 ## TO-DO
 
 - Ball speed increase after every collision
-- Bricks  
-- Bricks collision  
-- Bricks destruction  
 - Lose  
 - Win
 

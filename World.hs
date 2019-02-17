@@ -13,7 +13,8 @@ data WorldObject = WorldObject
         location :: Vector, -- Where is the object located on the world
         scale :: Vector, -- What's the scale of the object on the world
         velocity :: Vector, -- Current object's velocity on the world
-        objColor :: Color -- Object's color
+        objColor :: Color, -- Object's color
+        enabled :: Bool
     }
 data CollisionType = NoCollision | LeftCollision | RightCollision | TopCollision | BottomCollision deriving (Eq)
 data BoundaryType = LeftBoundary | RightBoundary | TopBoundary | BottomBoundary deriving (Eq)
@@ -96,7 +97,8 @@ createObject (xLoc, yLoc) (xScale, yScale) (xVel, yVel) color = WorldObject
                                                                         location = createVector(xLoc, yLoc),
                                                                         scale = createVector(xScale, yScale),
                                                                         velocity = createVector(xVel, yVel),
-                                                                        objColor = color
+                                                                        objColor = color,
+                                                                        enabled = True
                                                                     }
 createBall :: (Float, Float) -> Float -> (Float, Float) -> Color -> WorldObject
 createBall (xLoc, yLoc) scale (xVel, yVel) color = createObject (xLoc, yLoc) (scale, scale) (xVel, yVel) color
