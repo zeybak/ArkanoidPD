@@ -12,6 +12,11 @@ This project is intended to showcase the power of Haskell and how it can be used
 - Haskell knowledge  
 - Cabal
 
+## How to test it
+
+- cabal new-run
+- for more information: https://www.haskell.org/cabal/users-guide/developing-packages.html
+
 ## TO-DO
 
 - Ball speed increase after every collision
